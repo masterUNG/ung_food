@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/register.dart';
+import 'package:http/http.dart' show get;
+import 'dart:convert';
 
 // void main() {
 //   runApp(App());
@@ -25,7 +27,25 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   // Explicit
   final formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   String emailString, passwordString;
+
+  void showSnackBar(String message) {
+    final snackBar = new SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(fontSize: 20.0),
+      ),
+      backgroundColor: Colors.red,
+      duration: new Duration(seconds: 8),
+      action: new SnackBarAction(
+        label: 'Hint',
+        onPressed: () {},
+      ),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
 
   Widget nameApp = Text(
     'Ung Food',
@@ -68,8 +88,33 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void checkUserAndPass(BuildContext context, String email, String password) {
+  void checkUserAndPass(
+      BuildContext context, String email, String password) async {
     print('email = $email, password = $password');
+    String urlString =
+        'https://www.androidthai.in.th/chit/getUserWhereUserMaster.php?isAdd=true&Email=$email';
+    var response = await get(urlString);
+    var result = json.decode(response.body);
+    print('result = $result');
+
+    if (result.toString() == 'null') {
+      showSnackBar('User False');
+    } else {}
+  }
+
+  showAlertDialog(BuildContext context) {
+    Widget okButton = FlatButton(
+      child: Text('OK'),
+      onPressed: () {},
+    );
+
+    AlertDialog alertDialog = AlertDialog(
+      title: Text('Have Problem'),
+      content: Text('User false'),
+      actions: <Widget>[okButton],
+    );
+
+    showDialog(context) {}
   }
 
   Widget signInButton(BuildContext context) {
@@ -109,34 +154,38 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         body: Form(
-      key: formKey,
-      child: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.yellow[900], Colors.yellow],
-                begin: Alignment.topLeft)),
-        child: Container(
-          margin: EdgeInsets.only(top: 80.0),
-          constraints: BoxConstraints.expand(width: 200.0),
-          child: Column(
-            children: <Widget>[
-              logo,
-              nameApp,
-              emailTextField(),
-              passwordTextField(),
-              Container(
-                margin: EdgeInsets.only(top: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[signInButton(context), signUpButton(context)],
-                ),
-              )
-            ],
+          key: formKey,
+          child: Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.yellow[900], Colors.yellow],
+                    begin: Alignment.topLeft)),
+            child: Container(
+              margin: EdgeInsets.only(top: 80.0),
+              constraints: BoxConstraints.expand(width: 200.0),
+              child: Column(
+                children: <Widget>[
+                  logo,
+                  nameApp,
+                  emailTextField(),
+                  passwordTextField(),
+                  Container(
+                    margin: EdgeInsets.only(top: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        signInButton(context),
+                        signUpButton(context)
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 }
