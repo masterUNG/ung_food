@@ -24,6 +24,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   // Explicit
+  final formKey = GlobalKey<FormState>();
+  String emailString, passwordString;
+
   Widget nameApp = Text(
     'Ung Food',
     style: TextStyle(
@@ -39,6 +42,14 @@ class _HomeState extends State<Home> {
     return TextFormField(
       decoration: InputDecoration(
           labelText: 'Email Address', hintText: 'you@email.com'),
+      validator: (String value) {
+        if (!value.contains('@')) {
+          return 'Please Fill Email Format';
+        }
+      },
+      onSaved: (String value) {
+        emailString = value;
+      },
     );
   }
 
@@ -46,10 +57,22 @@ class _HomeState extends State<Home> {
     return TextFormField(
       decoration:
           InputDecoration(labelText: 'Password', hintText: 'more 6 Charator'),
+      validator: (String value) {
+        if (value.length <= 5) {
+          return 'Please Type Password More 6 Charator';
+        }
+      },
+      onSaved: (String value) {
+        passwordString = value;
+      },
     );
   }
 
-  Widget signInButton() {
+  void checkUserAndPass(BuildContext context, String email, String password) {
+    print('email = $email, password = $password');
+  }
+
+  Widget signInButton(BuildContext context) {
     return RaisedButton(
       color: Colors.blue[600],
       child: Text(
@@ -58,6 +81,11 @@ class _HomeState extends State<Home> {
       ),
       onPressed: () {
         print('You Click SignIn');
+        print(formKey.currentState.validate());
+        if (formKey.currentState.validate()) {
+          formKey.currentState.save();
+          checkUserAndPass(context, emailString, passwordString);
+        }
       },
     );
   }
@@ -81,7 +109,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+        body: Form(
+      key: formKey,
+      child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -100,13 +130,13 @@ class _HomeState extends State<Home> {
                 margin: EdgeInsets.only(top: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[signInButton(), signUpButton(context)],
+                  children: <Widget>[signInButton(context), signUpButton(context)],
                 ),
               )
             ],
           ),
         ),
       ),
-    );
+    ));
   }
 }
