@@ -115,28 +115,15 @@ class _HomeState extends State<Home> {
           showSnackBar('Welcome $name');
 
           var myServiceRoute = new MaterialPageRoute(
-              builder: (BuildContext coneext) => MyService(nameLoginString: name,));
-              Navigator.of(context).push(myServiceRoute);
+              builder: (BuildContext coneext) => MyService(
+                    nameLoginString: name,
+                  ));
+          Navigator.of(context).push(myServiceRoute);
         } else {
           showSnackBar('Please Try Again Password False');
         }
       }
     } // if
-  }
-
-  showAlertDialog(BuildContext context) {
-    Widget okButton = FlatButton(
-      child: Text('OK'),
-      onPressed: () {},
-    );
-
-    AlertDialog alertDialog = AlertDialog(
-      title: Text('Have Problem'),
-      content: Text('User false'),
-      actions: <Widget>[okButton],
-    );
-
-    showDialog(context) {}
   }
 
   Widget signInButton(BuildContext context) {
